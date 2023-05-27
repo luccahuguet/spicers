@@ -11,18 +11,18 @@ pub fn t5() {
     {
         println!("Questão 1:\n");
 
-        let r = [Complex::new(3.0, 0.0), Complex::new(6.0, 0.0)];
+        let z = [Complex::new(3.0, 0.0), Complex::new(6.0, 0.0)];
         let c = 1.0 / 2.0;
         let w = 1.0;
-        let imp = series(&[r[0], parallel(r[1], impedance_capacitor(w, c))]);
+        let imp = series(&[z[0], parallel(z[1], impedance_capacitor(w, c))]);
         let v = polar_to_rect(6.0, 0_f64);
         let i = v / imp;
 
-        let avg_pow_r1 = average_power_resistor(i, r[1]);
+        let avg_pow_r1 = average_power_resistor(i, z[1]);
 
-        println!(
+        println!(   
             "A potência média em R1 ({:.2} + {:.2}i) é {:.3} W",
-            r[0].re, r[0].im, avg_pow_r1
+            z[0].re, z[0].im, avg_pow_r1
         );
     }
     {

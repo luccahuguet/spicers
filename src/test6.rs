@@ -78,7 +78,7 @@ pub fn t6() {
         // a)
         let theta1 = (fp1).acos().to_degrees();
         let q1 = p1 * theta1.to_radians().tan();
-        let s1: Complex<f64> = Complex::new(p1, q1);
+        let s1: f64 = p1 / fp1;
         println!("Letra a:");
         println!("Potência aparente: {:.2} VA", s1);
         println!("Potência reativa: {:.2} VAR", q1);
@@ -86,7 +86,7 @@ pub fn t6() {
         // b)
         let theta2 = (fp2).acos().to_degrees();
         let q2 = p1 * theta2.to_radians().tan();
-        let s2: Complex<f64> = Complex::new(p1, q2);
+        let s2: f64 = p1 / fp2;
         println!("\nLetra b:");
         println!("Potência aparente2: {:.2} VA", s2);
         println!("Potência reativa2: {:.2} VAR", q2);
@@ -103,8 +103,8 @@ pub fn t6() {
 
         // e)
         // complex conjugate
-        let i_eff1 = (s1 / v).conj();
-        let i_eff2 = (s2 / v).conj();
+        let i_eff1 = (s1 / v).conj().abs();
+        let i_eff2 = (s2 / v).conj().abs();
         println!("\nLetra e:\nCorrente eficaz Inicial: {:.2} A", i_eff1);
         println!("Corrente eficaz final: {:.2} A", i_eff2);
         println!("Diferença: {:.2} A", i_eff2 - i_eff1);
@@ -115,13 +115,13 @@ pub fn t6() {
         let p1 = 4_000.0; // W
         let fp1: f64 = 0.8; // atrasado
         let theta1 = (fp1).acos().to_degrees();
-        let q1 = p1 * theta1.to_radians().tan() * J;
-        let _s1 = Complex::new(p1, q1.im);
+        let q1 = p1 * theta1.to_radians().tan();
+        let _s1 = p1 / fp1;
 
         let fp2: f64 = 0.95; // atrasado
         let theta2 = (fp2).acos().to_degrees();
-        let q2 = p1 * theta2.to_radians().tan() * J;
-        let _s2 = Complex::new(p1, q2.im);
+        let q2 = p1 * theta2.to_radians().tan();
+        let _s2 = p1 / fp2;
 
         let q_adicionado = q2 - q1;
         let w = 2.0 * std::f64::consts::PI * f;

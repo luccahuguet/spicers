@@ -8,8 +8,8 @@ pub fn parallel(ra: Complex<f64>, rb: Complex<f64>) -> Complex<f64> {
 }
 
 #[allow(dead_code)]
-pub fn series(resistances: &[Complex<f64>]) -> Complex<f64> {
-    resistances.iter().sum()
+pub fn series(z_arr: &[Complex<f64>]) -> Complex<f64> {
+    z_arr.iter().sum()
 }
 
 #[allow(dead_code)]
