@@ -1,69 +1,135 @@
 use num::complex::{Complex, ComplexFloat};
 
 // Bring functions into scope
-use crate::fns::{
-    apparent_power, average_power, average_power_resistor, get_p_and_q, impedance_capacitor,
-    impedance_inductor, parallel, particular_response, polar_to_rect, power_factor,
-    power_factor_angle, rect_to_polar, series, voltage_divider,
-};
 
+const J: Complex<f64> = Complex::new(0.0, 1.0);
+// fp = fator de potência
+// q = potência reativa
+// p = potência ativa
+// v = tensão
+// f = frequência
+// theta_fp = ângulo de fp
+// s = potência aparente
+// w = frequência angular
+// qc = reatância capacitiva
+// c = capacitância
+
+#[allow(dead_code)]
 pub fn t6() {
     {
-        println!("Questão 1:\n");
+        let fp: f64 = 0.85; // atrasado
+        let q = 140_000.0; // Var
+        let v = 110.0; // V
+        let f = 60.0; // Hz
 
-        let power_factor: f64 = 0.85; // late
-        let apparent_power = 140_000.0; // VA
-        let voltage = 110.0; // V
-        let frequency = 60.0; // Hz
-                              // desired power factor = 1
-        let power_factor_angle = (power_factor).acos().to_degrees();
-        let p = apparent_power * power_factor;
-        let q = apparent_power * (1.0 - power_factor.powi(2)).sqrt();
+        let theta_fp = (fp).acos().to_degrees();
+        let s = q / theta_fp.to_radians().sin();
+        let p = s * fp;
+
+        // Fator de potência desejado
+        let new_fp: f64 = 1.0;
+        // Achar o novo theta
+        let new_theta_fp = (new_fp).acos().to_degrees();
+        // Como a potencia ativa é a mesma, podemos calcular a nova potencia reativa usando arco tangente
+        let new_q = new_theta_fp.to_radians().tan() / p;
+
+        let w = 2.0 * std::f64::consts::PI * f;
+        let q_adicionado = (new_q - q).abs();
+
+        // Qc = v^2 / Xc
+        let impedancia_cap = v.powi(2) / q_adicionado;
+        let capacitancia = 1.0 / (w * impedancia_cap);
+
+        println!("\n Questão 1:\n");
+        println!("novo fator de potência: {:.2}", new_fp);
+        println!("novo theta: {:.2}", new_theta_fp);
+        println!("nova potência reativa: {:.2} VAR", new_q);
+        println!("potencia aparante: {:.2} kVA", s / 1000.0);
+        println!("impendância capacitiva: {:.2} ohms", impedancia_cap);
+        println!("capacitância: {:.2} mF", capacitancia * 1_000.0);
     }
     {
-        println!("\nQuestão 2:\n");
         let p1 = 2_000.0; // VA
-        let power_factor1: f64 = 0.75; // early
+        let fp1: f64 = 0.75; // early
         let p2 = 4_000.0; // VA
-        let power_factor2: f64 = 0.95; // late
-        let angle1 = -(power_factor1).acos().to_degrees();
-        let angle2 = (power_factor2).acos().to_degrees();
-        let q1 = p1 / power_factor1 * angle1.to_radians().sin();
-        let q2 = p2 / power_factor2 * angle2.to_radians().sin();
+        let fp2: f64 = 0.95; // late
+        let theta1 = -(fp1).acos().to_degrees();
+        let theta2 = (fp2).acos().to_degrees();
+        let q1 = p1 / fp1 * theta1.to_radians().sin();
+        let q2 = p2 / fp2 * theta2.to_radians().sin();
 
-        let total_complex_power = Complex::new(p1 + p2, q1 + q2);
+        let potencia_complexa: Complex<f64> = Complex::new(p1 + p2, q1 + q2);
 
+        println!("\nQuestão 2:\n");
         println!(
-            "Potência complexa total: {} + {}i VA",
-            total_complex_power.re / 1000.0,
-            total_complex_power.im / 1000.0
+            "Potência complexa total: {:.2} + {:.2}j kVA",
+            potencia_complexa.re / 1000.0,
+            potencia_complexa.im / 1000.0
         );
     }
     {
-        println!("Questão 3:\n");
-        let voltage = 120.0; // V
-        let frequency: f64 = 60.0; // Hz
+        println!("\nQuestão 3:\n");
+        let v = Complex::new(120.0, 0.0);
+        let f: f64 = 60.0; // Hz
         let p1 = 4_000.0; // W
-        let power_factor: f64 = 0.8; // late
-        let power_factor2: f64 = 0.95; // late
+        let fp1: f64 = 0.8; // late
+        let fp2: f64 = 0.95; // late
 
         // a)
-        let apparent_power = p1 / power_factor;
-        let q1 = (apparent_power * (1.0 - power_factor.powi(2)).sqrt()).round();
+        let theta1 = (fp1).acos().to_degrees();
+        let q1 = p1 * theta1.to_radians().tan();
+        let s1: Complex<f64> = Complex::new(p1, q1);
+        println!("Letra a:");
+        println!("Potência aparente: {:.2} VA", s1);
+        println!("Potência reativa: {:.2} VAR", q1);
 
         // b)
-        let apparent_power2 = p1 / power_factor2;
-        let q2 = (apparent_power2 * (1.0 - power_factor2.powi(2)).sqrt()).round();
+        let theta2 = (fp2).acos().to_degrees();
+        let q2 = p1 * theta2.to_radians().tan();
+        let s2: Complex<f64> = Complex::new(p1, q2);
+        println!("\nLetra b:");
+        println!("Potência aparente2: {:.2} VA", s2);
+        println!("Potência reativa2: {:.2} VAR", q2);
 
         // d) the capacitor to change the power factor from 0.8 to 0.95
-        let qc1 = (apparent_power * (1.0 - power_factor2.powi(2)).sqrt()).round();
-        let qc2 = (apparent_power2 * (1.0 - power_factor2.powi(2)).sqrt()).round();
-        let z = voltage.powi(2) / p1;
-        let c = 1.0 / (2.0 * std::f64::consts::PI * frequency * z);
-        println!("Potência aparente: {} VA", apparent_power);
-        println!("Potência reativa: {} VAR", q1);
-        println!("Potência aparente2: {} VA", apparent_power2);
-        println!("Potência reativa2: {} VAR", q2);
-        println!("Capacitância: {} uF", c * 1_000_000.0);
+        let q_adicionado = (q2 - q1).abs();
+        let w = 2.0 * std::f64::consts::PI * f;
+        let impedancia_cap = v.powi(2) / q_adicionado;
+        let capacitancia = 1.0 / (w * impedancia_cap);
+        println!("\nLetra d:");
+        println!("Potência reativa adicionada: {:.2} VAR", q_adicionado);
+        println!("impendância capacitiva: {:.2} ohms", impedancia_cap);
+        println!("Capacitância: {:.2} uF", capacitancia * 1_000_000.0);
+
+        // e)
+        // complex conjugate
+        let i_eff1 = (s1 / v).conj();
+        let i_eff2 = (s2 / v).conj();
+        println!("\nLetra e:\nCorrente eficaz Inicial: {:.2} A", i_eff1);
+        println!("Corrente eficaz final: {:.2} A", i_eff2);
+        println!("Diferença: {:.2} A", i_eff2 - i_eff1);
+    }
+    {
+        let v = Complex::new(120.0, 0.0);
+        let f = 60.0; // Hz
+        let p1 = 4_000.0; // W
+        let fp1: f64 = 0.8; // atrasado
+        let theta1 = (fp1).acos().to_degrees();
+        let q1 = p1 * theta1.to_radians().tan() * J;
+        let _s1 = Complex::new(p1, q1.im);
+
+        let fp2: f64 = 0.95; // atrasado
+        let theta2 = (fp2).acos().to_degrees();
+        let q2 = p1 * theta2.to_radians().tan() * J;
+        let _s2 = Complex::new(p1, q2.im);
+
+        let q_adicionado = q2 - q1;
+        let w = 2.0 * std::f64::consts::PI * f;
+        let imp_cap = (v.powi(2) / q_adicionado).conj();
+        let capacitancia = 1.0 / (w * imp_cap.abs());
+
+        println!("\nQuestão 4:\n");
+        println!("Capacitância: {:.2} uF", capacitancia * 1_000_000.0);
+        println!("Impedância capacitiva: {:.2} ohms", imp_cap);
     }
 }

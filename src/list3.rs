@@ -5,6 +5,7 @@ use crate::fns::{
     eval_in_t, impedance_capacitor, impedance_inductor, polar_to_rect, rect_to_polar, series,
 };
 
+#[allow(dead_code)]
 pub fn list3() {
     println!("Questão 1:\n");
     {

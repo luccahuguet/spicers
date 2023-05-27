@@ -2,11 +2,11 @@ use num::complex::Complex;
 
 // Bring functions into scope
 use crate::fns::{
-    impedance_capacitor, impedance_inductor, parallel, particular_response, rect_to_polar, series,
-    voltage_divider,
+    impedance_capacitor, impedance_inductor, particular_response, rect_to_polar, series,
 };
 
 // Question 2
+#[allow(dead_code)]
 pub fn t4() {
     println!("Questão 2:\n");
 
