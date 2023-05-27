@@ -2,8 +2,8 @@ use num::complex::{Complex, ComplexFloat};
 
 // Bring functions into scope
 use crate::fns::{
-    apparent_power, average_power_resistor, impedance_capacitor,
-    parallel, polar_to_rect, series,
+    apparent_power, average_power_resistor, current_divider, impedance_capacitor, parallel,
+    polar_to_rect, series,
 };
 
 #[allow(dead_code)]
@@ -14,13 +14,15 @@ pub fn t5() {
         let z = [Complex::new(3.0, 0.0), Complex::new(6.0, 0.0)];
         let c = 1.0 / 2.0;
         let w = 1.0;
-        let imp = series(&[z[0], parallel(z[1], impedance_capacitor(w, c))]);
+        let z_tot = series(&[z[0], parallel(z[1], impedance_capacitor(w, c))]);
         let v = polar_to_rect(6.0, 0_f64);
-        let i = v / imp;
 
-        let avg_pow_r1 = average_power_resistor(i, z[1]);
+        let i = v / z_tot;
+        let i_r6 = current_divider(i, z[1], z_tot);
 
-        println!(   
+        let avg_pow_r1 = average_power_resistor(i_r6, z[1]);
+
+        println!(
             "A potência média em R1 ({:.2} + {:.2}i) é {:.3} W",
             z[0].re, z[0].im, avg_pow_r1
         );

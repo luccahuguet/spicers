@@ -1,8 +1,5 @@
 use num::complex::{Complex, ComplexFloat};
 
-// Bring functions into scope
-
-const J: Complex<f64> = Complex::new(0.0, 1.0);
 // fp = fator de potência
 // q = potência reativa
 // p = potência ativa

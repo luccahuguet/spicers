@@ -23,8 +23,17 @@ pub fn impedance_capacitor(w: f64, c: f64) -> Complex<f64> {
 }
 
 #[allow(dead_code)]
-pub fn voltage_divider(vin: Complex<f64>, r1: Complex<f64>, r2: Complex<f64>) -> Complex<f64> {
-    vin * (r2 / (r1 + r2))
+pub fn voltage_divider(v_in: Complex<f64>, z1: Complex<f64>, z2: Complex<f64>) -> Complex<f64> {
+    v_in * (z2 / (z1 + z2))
+}
+
+#[allow(dead_code)]
+pub fn current_divider(
+    i_in: Complex<f64>,
+    z1_branch_analyzed: Complex<f64>,
+    z2_other_branch: Complex<f64>,
+) -> Complex<f64> {
+    i_in * (z1_branch_analyzed / (z1_branch_analyzed + z2_other_branch))
 }
 
 #[allow(dead_code)]
